@@ -1,0 +1,10 @@
+wp-admin/
+wp-includes/
+
+
+plugins/
+uploads/
+themes/twentytwentyfour/
+
+wp-config.php
+wp-settings.php
