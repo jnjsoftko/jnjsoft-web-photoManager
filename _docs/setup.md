@@ -4,6 +4,14 @@ user: master.vw
 password: V*******!
 email: jnjsoft.**@gmail.com
 
+## git
+
+```sh
+cd "/Users/youchan/Local Sites/photomanager/app/public"
+github -e pushRepo -u jnjsoftko -n jnjsoft-web-photoManager -d "사진 관리툴(wordpress)"
+```
+
+
 ## .env
 
 * .env 사용
