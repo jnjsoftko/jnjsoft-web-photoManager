@@ -5,10 +5,14 @@ wp-includes/
 plugins/
 uploads/
 themes/twentytwentyfour/
-photos/
+photos/*
 
 wp-config.php
 wp-settings.php
+
+# secret
+.env
+vendor/
 
 # mac
 # find . -name .DS_Store -print0 | xargs -0 git rm -f --ignore-unmatch
