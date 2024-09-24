@@ -5,6 +5,7 @@ wp-includes/
 plugins/
 uploads/
 themes/twentytwentyfour/
+photos/
 
 wp-config.php
 wp-settings.php

@@ -45,37 +45,59 @@ function formatGpsTime($gpsTime, $gpsDate) {
 }
 
 function extractExifGpsData($imagePath) {
-    if (!file_exists($imagePath)) {
-        return "File does not exist.";
-    }
+  if (!file_exists($imagePath)) {
+      return "File does not exist.";
+  }
 
-    $exif = exif_read_data($imagePath, 'EXIF', true);
+  $exif = exif_read_data($imagePath, 'EXIF', true);
 
-    if ($exif && isset($exif['GPS'])) {
-        $gpsLat = $exif['GPS']['GPSLatitude'];
-        $gpsLatRef = $exif['GPS']['GPSLatitudeRef'];
-        $gpsLong = $exif['GPS']['GPSLongitude'];
-        $gpsLongRef = $exif['GPS']['GPSLongitudeRef'];
-        $gpsTime = isset($exif['GPS']['GPSTimeStamp']) ? $exif['GPS']['GPSTimeStamp'] : null;
-        $gpsDate = isset($exif['GPS']['GPSDateStamp']) ? $exif['GPS']['GPSDateStamp'] : null;
+  if ($exif && isset($exif['GPS'])) {
+      $gpsLat = $exif['GPS']['GPSLatitude'];
+      $gpsLatRef = $exif['GPS']['GPSLatitudeRef'];
+      $gpsLong = $exif['GPS']['GPSLongitude'];
+      $gpsLongRef = $exif['GPS']['GPSLongitudeRef'];
+      $gpsTime = isset($exif['GPS']['GPSTimeStamp']) ? $exif['GPS']['GPSTimeStamp'] : null;
+      $gpsDate = isset($exif['GPS']['GPSDateStamp']) ? $exif['GPS']['GPSDateStamp'] : null;
+      
+      // Extracting altitude
+      $gpsAltitude = isset($exif['GPS']['GPSAltitude']) ? $exif['GPS']['GPSAltitude'] : null;
+      $gpsAltitudeRef = isset($exif['GPS']['GPSAltitudeRef']) ? $exif['GPS']['GPSAltitudeRef'] : null;
 
-        $latitude = getGps($gpsLat, $gpsLatRef);
-        $longitude = getGps($gpsLong, $gpsLongRef);
+      $latitude = getGps($gpsLat, $gpsLatRef);
+      $longitude = getGps($gpsLong, $gpsLongRef);
+      $altitude = getAltitude($gpsAltitude, $gpsAltitudeRef);
 
-        // 'Asia/Seoul' 시간대로 변환된 시간
-        $formattedTime = formatGpsTime($gpsTime, $gpsDate);
+      // 'Asia/Seoul' 시간대로 변환된 시간
+      $formattedTime = formatGpsTime($gpsTime, $gpsDate);
 
-        return [
-            'latitude' => $latitude,
-            'longitude' => $longitude,
-            'time' => $formattedTime
-        ];
-    } else {
-        return "No GPS data found.";
-    }
+      return [
+          'latitude' => $latitude,
+          'longitude' => $longitude,
+          'altitude' => $altitude,
+          'time' => $formattedTime
+      ];
+  } else {
+      return "No GPS data found.";
+  }
 }
 
-$imagePath = '/Users/youchan/Local Sites/photomanager/app/public/photo-man/photos/20240916_105405.jpg'; // 이미지 파일 경로
+// Function to calculate altitude
+function getAltitude($altitude, $altitudeRef) {
+  if ($altitude === null) {
+      return null;
+  }
+
+  // GPSAltitudeRef: 0 = Above Sea Level, 1 = Below Sea Level
+  $alt = (float) $altitude;
+  if ($altitudeRef == 1) {
+      $alt = -$alt;
+  }
+
+  return $alt . ' meters';
+}
+
+
+$imagePath = 'photos/_20240916_105405.jpg'; // 이미지 파일 경로
 $result = extractExifGpsData($imagePath);
 print_r($result);
 
